@@ -10,11 +10,13 @@ $params['sysco']['errors'] = true;
 $params['sysco']['syskey'] = "JHJIHSJH68HJ9870985JHG765BKHJLLS";
 
 //configurações de layout
-$params['sysco']['title'] = "Sysco - v 4.0";
+$params['sysco']['title'] = "Sysco ffgf - v 4.0";
 $params['sysco']['author'] = "Darc Web";
 $params['sysco']['copyright'] = "Copyright © 2016 - {author} - Todos os direitos reservados";
 $params['sysco']['baseurl'] = $_SERVER['SERVER_NAME'];
 $params['sysco']['url'] = $_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+
+
 
 //configurações de base
 $params['sysco']['system'] = $_SERVER['SYSTEM'];
