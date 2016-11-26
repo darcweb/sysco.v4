@@ -1,0 +1,10 @@
+RewriteEngine on
+RewriteCond %{HTTP_HOST} !^www [NC]
+RewriteCond %{HTTP_HOST} \.(br|com|net|org|adv|ind|art|eng|inf|tur|srv|tv)$ [NC]
+RewriteRule ^(.*) http://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+RewriteRule .* - [E=VERSION_SYS:4.0.1]
+RewriteRule .* - [E=SYSTEM:sysco]
+RewriteRule .* - [E=LOCALSET:%{SERVER_NAME}%{REQUEST_URI}]
+RewriteRule .* - [E=EXECUTION:%{ENV:SYSTEM}/run.php?uri=%{ENV:LOCALSET}]
+RewriteRule !\.(txt|css|js|gif|jpeg|jpg|png|ico|JPG|JPEG|PNG|GIF|svg|eot|ttf|woff|woff2|php|html|ogg|mp3|mp4|wma|avi|xml|map)$ %{ENV:EXECUTION}
+Options -Indexes
