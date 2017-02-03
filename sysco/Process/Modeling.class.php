@@ -89,24 +89,21 @@ class Modeling {
     
     private function objectConsult($queryString,$log=true){
         $result = NULL;
-        //if($this->dbLiberty($queryString)){
-            $queryStringConsult = $this->prepareConsult($queryString);
-            if($this->conn){
-                
-                //$this->queryPropagate($queryStringConsult,$log);
-                $prepareQuery = $this->conn->prepare($queryStringConsult);
-                $prepareQuery->execute();
-                $databaseErrors = $prepareQuery->errorInfo();
-                if($databaseErrors[2]){
-                    /*echo '<pre>';
-                    print_r($databaseErrors[2]);
-                    echo '</pre>';*/
-                }else{
-                    $result = $prepareQuery;
-                }
-                
+        $queryStringConsult = $this->prepareConsult($queryString);
+        if($this->conn){
+
+            $prepareQuery = $this->conn->prepare($queryStringConsult);
+            $prepareQuery->execute();
+            $databaseErrors = $prepareQuery->errorInfo();
+            if($databaseErrors[2]){
+                /*echo '<pre>';
+                print_r($databaseErrors[2]);
+                echo '</pre>';*/
+            }else{
+                $result = $prepareQuery;
             }
-        //}
+
+        }
         return $result;
     }
 
@@ -116,7 +113,6 @@ class Modeling {
         
         if($this->conn){
         
-            //$this->queryPropagate($queryStringList,$log);
             $prepareQuery = $this->conn->prepare($queryStringList);
             $prepareQuery->execute();
             
@@ -127,21 +123,10 @@ class Modeling {
         return $result;
     }
 
-    /*function dbLiberty($string){
-        $result = false;
-        if(strpos($this->local(),'sas_') === false || strpos($string,'SELECT') !== false ||  strpos($string,'CREATE') !== false || 
-          (strpos($this->local(),'sas_') !== false && $this->saslog->id!='') || (strpos($this->local(),'sas_') !== false && strpos($string,'sas_auth') !== false)){
-                $result = true;
-        }
-        return $result;
-    }*/
-        
     private function adjustTable($table,$string,$log=true){
        
         $result = NULL;
         $executeQuery=true;
-        
-        ///$this->objectConsult($string);
         
         $checktable = $this->objectCount("SHOW TABLES LIKE '".$table."'");
         if($checktable>0){
@@ -162,9 +147,7 @@ class Modeling {
             
             $result = $this->objectList("SHOW COLUMNS FROM ".$table,false);//"SELECT ".$getCol." FROM ".$tablealter);
             while($data = $result->fetch(PDO::FETCH_OBJ)){
-                print_r($data);
-                echo "<br/>";
-                //echo "`".$data->Field."` ".$data->Type." ".$data->."<br>";
+                
                 $tableactualfield[] = $this->charSet($data->Field);
 
             }
@@ -174,145 +157,6 @@ class Modeling {
             $this->objectConsult($string);
             
         }
-        
-        echo $checktable." - ".$showcolumns." - ".$currentfields;
-        
-        /*if(strpos($string, "SELECT") === false && strpos($string, "CREATE TABLE") === false && $log){
-
-            $strExOne = explode(' ', $string);
-            $setAction = $strExOne[0];
-            $strEx = explode('sysco', $string);
-            $strExSet = explode(' ', $strEx[1]);
-
-            $showTableLog = 'sysco'.$strExSet[0];
-            $showTitleLog = 'Log de consulta SQL - '.$setAction;
-            $showContentLog = $this->secure($string);
-            $this->sysLog(0,$showTableLog,$showTitleLog,$showContentLog);
-
-        }else if(strpos($string, "CREATE TABLE") !== false){
-
-            $lines = explode("\n", $string);
-            $countlines = count($lines);
-            $tablealterEx = explode('(',$lines[0]);
-            $tablealterExEx = explode(' ',$tablealterEx[0]);
-            $tablealter = str_replace('`','',$tablealterExEx[count($tablealterExEx)-2]);
-            $checktable = $this->objectCount("SHOW TABLES LIKE '".$tablealter."'");
-
-            if($checktable>0){
-
-                $showcolumns = $this->objectCount("SHOW COLUMNS FROM ".$tablealter);
-                $newlines = array();
-
-                foreach($lines as $il=>$vl){
-                    if($il>0 && $il<(count($lines)-2)){
-                        $newlines[] = $vl;
-                    }
-                }
-
-                $tableactual = array();
-                $tableactualfield = array();
-                $result = $this->objectList("SHOW COLUMNS FROM ".$tablealter,false);//"SELECT ".$getCol." FROM ".$tablealter);
-                while($data = $result->fetch(PDO::FETCH_OBJ)){
-
-                    $tableactual[] = "`".$data->Field."` ".$data->Type;
-                    $tableactualfield[] = $this->charSet($data->Field);
-
-                }
-
-                $tablenew = array();
-                $tablenewfield = array();
-                $tablecompletnew = array();
-                if(is_array($newlines)){
-
-                    foreach($newlines as $iln=>$vln){
-
-                        $getColEx = explode(' ',$vln);
-                        if($this->charSet($getColEx[0])!=''){
-
-                            $getCol = "`".$this->charSet($getColEx[0])."` ".$getColEx[1];
-                            $tablenew[] = $getCol;
-                            $tablenewfield[] = $this->charSet($getColEx[0]);
-                            $getComEx = explode($getColEx[1],$vln);
-                            $tablecompletnew[] = $getComEx[1];
-
-                        }
-
-                    }
-
-                }
-
-                $tableupdate = array();
-                if(count($tableactual)==count($tablenew)){
-
-                    $sumadd=0;
-                    foreach($tableactual as $ictn=>$vctn){
-
-                        if($tableactual[$ictn] == $tablenew[$ictn-$sumadd]){
-
-                            $tableupdate[] = $tablenew[$ictn]." ".$tablecompletnew[$ictn];
-
-                        }else if($tableactualfield[$ictn]){
-
-                            $queryalter = "ALTER TABLE `".$tablealter."` CHANGE ".$tableactualfield[$ictn]." ".$tablenew[$ictn]." ".str_replace(',','',$tablecompletnew[$ictn]);
-                            $this->objectConsult($queryalter,false);
-                            $sumadd++;
-
-                        }
-
-                    }
-
-                }else if(count($tableactual)>count($tablenew)){
-
-                    $sumadd=0;
-                    foreach($tableactual as $ictn=>$vctn){
-
-                        if(@$tableactualfield[$ictn] == @$tablenewfield[$ictn-$sumadd]){
-
-                            $tableupdate[] = $tablenew[$ictn]." ".$tablecompletnew[$ictn];
-
-                        }else if($tableactualfield[$ictn] && $sumadd==0){
-
-                            $queryalter = "ALTER TABLE `".$tablealter."` DROP ".$tableactualfield[$ictn];
-                            $this->objectConsult($queryalter,false);
-                            $sumadd++;
-
-                        }
-
-                    }
-
-                }else{
-
-                    $sumadd=0;
-                    foreach($tablenew as $ictn=>$vctn){
-
-                        if(strpos($tablenew[$ictn], $tableactual[$ictn-$sumadd]) !== false){
-
-                            $tableupdate[] = $tablenew[$ictn]." ".$tablecompletnew[$ictn];
-                            $sumadd=0;
-
-                        }else{
-
-                            $reference = $tablenewfield[$ictn-1];
-                            $queryalter = "ALTER TABLE `".$tablealter."` ADD ".$tablenew[$ictn]." ".str_replace(',','',$tablecompletnew[$ictn]).($reference?" AFTER `".$reference."`":"");
-                            //echo $queryalter;
-                            $this->objectConsult($queryalter,false);
-                            if(!$reference){
-                                $this->objectConsult("ALTER TABLE `".$tablealter."` ADD PRIMARY KEY (".$tableset.")",false);
-                            }
-                            $sumadd++;
-
-                        }
-
-
-                    }
-
-                }
-
-                $executeQuery=false;
-
-            }
-
-        }*/
         
     }
     
@@ -416,7 +260,7 @@ class Modeling {
                         
                         $config = $this->model->fields[$field];
                         
-                        print_r($config);
+                        //print_r($config);
                         
                         $setreference = (isset($reference[$index])?$reference[$index]."":"");
                         $setcolum = $field." ";
@@ -611,9 +455,6 @@ class Modeling {
     private function proccess(){
         
         $this->changeTable();
-        
-        //print_r($this->model);
-        //echo "iniciando modelagem";
         
     }
     
