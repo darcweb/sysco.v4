@@ -1,5 +1,5 @@
 
-<div>Meus produtos - {{ echo $this->request->a; }}</div>
+<div> HUE Meus produtos - {{ echo $this->request->a; }}</div>
 
 <br/>
 
