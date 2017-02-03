@@ -4,12 +4,12 @@
     
 <meta charset="utf-8"/>
 
-<title>Sysco 4.0</title>
+<title>{{ echo $this->system->params['sysco']['title']; }}</title>
 
 </head>
 <body>
 
-    <div>Hello world, i am Sysco v4!</div>
+<div>Hello world, i am {{ echo $this->system->params['sysco']['title']; }}!</div>
     
     {{content}}
 

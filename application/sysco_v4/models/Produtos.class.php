@@ -1,6 +1,6 @@
 <?php
 
-class Produtos {
+class Produtos extends GlobalVars {
         
     public $config = array();
     public $fields = array();
@@ -30,7 +30,7 @@ class Produtos {
     
     function getitem(){
         
-        //print_r($this->globalvars);
+        //print_r($this->);
         
         $result = "Model produtos";
         
