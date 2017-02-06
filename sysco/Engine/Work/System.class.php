@@ -85,8 +85,6 @@ class System {
 
     public function objectCount($queryString){
         
-        echo "teste<br><br>";
-        
         $result = NULL;
 
         $queryStringCount = $this->prepareConsult($queryString);
