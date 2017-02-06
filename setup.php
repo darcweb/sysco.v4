@@ -38,8 +38,8 @@ $params['sysco']['localdb']['database'] = "sysco_v4";
 $params['sysco']['localdb']['driver'] = "mysql";
 $params['sysco']['onlinedb']['host'] = "localhost";
 $params['sysco']['onlinedb']['port'] = 3306;
-$params['sysco']['onlinedb']['user'] = "coisapp_user";
-$params['sysco']['onlinedb']['password'] = "7KMoxf584m";
-$params['sysco']['onlinedb']['database'] = "coisapp_database";
+$params['sysco']['onlinedb']['user'] = "online_user";
+$params['sysco']['onlinedb']['password'] = "password_user";
+$params['sysco']['onlinedb']['database'] = "online_database";
 
 
