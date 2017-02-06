@@ -2,10 +2,13 @@
 
 class Produtos {
         
+    public $sysco = null;
     public $config = array();
     public $fields = array();
 
-    function __construct(){
+    function __construct($sysco){
+        
+        $this->sysco = $sysco;
         
         $this->config['table'] = "produtos";
         $this->config['engine'] = "MyISAM";
@@ -31,6 +34,10 @@ class Produtos {
     function getitem(){
         
         print_r($this);
+        echo "<br><br>";
+        var_dump($this->sysco->params);
+        var_dump($this->sysco->request->a);
+        var_dump($this->sysco);
         
         $result = "<br><br>Model produtos";
         

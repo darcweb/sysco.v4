@@ -86,7 +86,7 @@ class Flow {
     
     private function proccess($classname){
         
-        $this->$classname = new $classname;
+        $this->$classname = new $classname($this->system);
         $this->setobject($this->$classname,$classname);
         
     }

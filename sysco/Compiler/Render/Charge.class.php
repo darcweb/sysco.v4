@@ -81,11 +81,9 @@ class Charge {
         
     }
     
-    
-    
     private function proccess($namespace,$classname){
         
-        $this->$classname = new $classname;
+        $this->$classname = new $classname($this->system);
         $this->setobject($this->$classname,$classname);
         
     }

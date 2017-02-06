@@ -14,15 +14,15 @@
 Loop de arrays:<br/>
 
 {{ foreach($this->request->gets as $item){ }}
-    
-    {{ if($item != ""){ }}
-    
-    <div>
-        {{ echo $item; }}<br/>
-    </div>
 
-    {{ } }}
-    
+{{ if($item != ""){ }}
+
+<div>
+    {{ echo $item; }}<br/>
+</div>
+
+{{ } }}
+
 {{ } }}
 
 <br/><br/>
@@ -30,11 +30,11 @@ Loop de arrays:<br/>
 Loop com sintaxe for:<br/>
 
 {{ for($i = 0; $i < 5; $i++): }}
-    
-    <div>
-        {{ echo $i; }}<br/>
-    </div>
-    
+
+<div>
+    {{ echo $i; }}<br/>
+</div>
+
 {{ endfor; }}
 
 <br/><br/>
@@ -43,16 +43,16 @@ Verificação, condição if:<br/>
 
 {{ if($this->request->b == "main"){ }}
 
-    <div>
-        {{ echo $this->functions->encodeCrypt($this->request->b); }}<br/>
-        {{ echo "Contém o parametro 'main' na url"; }}
-    </div>
+<div>
+    {{ echo $this->functions->encodeCrypt($this->request->b); }}<br/>
+    {{ echo "Contém o parametro 'main' na url"; }}
+</div>
 
 {{ }else{ }}
 
-    <div>
-        {{ echo "Nao contém o parametro 'main' na url."; }}
-    </div>
+<div>
+    {{ echo "Nao contém o parametro 'main' na url."; }}
+</div>
 
 {{ } }}
 
@@ -63,7 +63,7 @@ Verificação, condição if:<br/>
 
 {{ $diferenca = strtotime($dataday) - strtotime($data); }}
 {{ $dias = floor($diferenca / (60 * 60 * 24)); }}
-        
+
 {{ echo $dias; }}
 
 <br/><br/>
