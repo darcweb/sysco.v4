@@ -29,7 +29,8 @@ class Produtos {
         
         //print_r($this);
         return "Inseriu com sucesso...<br><br><br>";
-        //$this->functions->objectQuery("");
+        $query = $this->query("SELECT * FROM produtos WHERE type='destaque'");
+        //$count =
         
     }
     
