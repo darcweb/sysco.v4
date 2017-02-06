@@ -39,6 +39,8 @@ Loop com sintaxe for:<br/>
 
 <br/><br/>
 
+{{ echo $this->functions->caseDate(); }}
+
 Verificação, condição if:<br/>
 
 {{ if($this->request->b == "main"){ }}

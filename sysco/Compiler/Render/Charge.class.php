@@ -100,7 +100,7 @@ class Charge {
         }
         
         $this->modelobject = $this->$class;
-        
+         
         new Modeling($this,$this->$class);
         
     }

@@ -15,10 +15,10 @@ class ProdutosController {
     function produtos(){
          
         //print_r($this);
-        //echo "<br><br>";
         //var_dump($this->sysco->params);
-        //var_dump($this->sysco->request->a);
+        print_r($this->sysco->functions->caseDate());
         //print_r($this->produtos);
+        echo "<br><br>";
         
         //print_r($this->produtos->insert());
         echo $this->produtos->insert(array('teste1'=>'1','teste2'=>'2','teste3'=>'3'));//"<br><br>";

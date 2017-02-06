@@ -27,9 +27,11 @@ class Produtos {
     
     function insert($param) {
         
+        print_r($this);
+        
         //print_r($this);
-        return "Inseriu com sucesso...<br><br><br>";
-        $query = $this->query("SELECT * FROM produtos WHERE type='destaque'");
+        return "<br><br>Inseriu com sucesso...<br><br><br>";
+        //$query = $this->query("SELECT * FROM produtos WHERE type='destaque'");
         //$count =
         
     }
