@@ -277,7 +277,7 @@ class Sights {
         
         $compile = $codeview;
         
-        $pathcompile = dirname(__FILE__).$this->system->SPATH."views".$this->system->SPATH;
+        $pathcompile = dirname(__FILE__).$this->system->SPATH."..".$this->system->SPATH."..".$this->system->SPATH."..".$this->system->SPATH."storage".$this->system->SPATH."compile".$this->system->SPATH;
         $this->functions->delTree($pathcompile);
         
         $oldumask = umask(0); 

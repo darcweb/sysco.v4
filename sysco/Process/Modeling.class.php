@@ -15,6 +15,31 @@ namespace Sysco\Proccess;
 use Sysco\Engine\Work\Connect;
 use PDO;
 
+class Func { 
+    
+    public static function fromFunction($name){ 
+        return new Func($name); 
+    } 
+    
+    public static function fromClassMethod($class, $name){ 
+        return new Func(array($class, $name)); 
+    } 
+    
+    public static function fromObjectMethod($object, $name){ 
+        return new Func(array($object, $name));        
+    } 
+
+    public $function; 
+
+    public function  __construct($function) { 
+        $this->function = $function; 
+    } 
+
+    public function __invoke(){ 
+        return call_user_func_array($this->function, func_get_args()); 
+    } 
+} 
+
 class Modeling {
     
     public $system = null;
@@ -29,6 +54,14 @@ class Modeling {
             'password' => '',
             'database' => '',
         );
+    
+    public function __call($method, $args)
+    {
+        if (isset($this->$method)) {
+            $func = $this->$method;
+            return call_user_func_array($func, $args);
+        }
+    }
     
     function __construct($build,$model){
         
@@ -459,7 +492,16 @@ class Modeling {
     }
     
     public function init(){
+
+        print_r($this->model);
+        echo "<br><br><br>";
+        print_r($this->system);
         
+        call_user_func_array($this->model, func_get_args());
+        
+        //Func::fromObjectMethod($this->model, $this);
+        
+
         $this->proccess();
         
     }

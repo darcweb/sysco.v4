@@ -13,11 +13,15 @@ class Functions {
         }
 
         function delTree($dir){
-            $files = array_diff(scandir($dir), array('.','..')); 
-            foreach ($files as $file) { 
-                (is_dir("$dir/$file")) ? $this->delTree("$dir/$file") : unlink("$dir/$file"); 
-            } 
-            return rmdir($dir); 
+            $files = @array_diff(scandir($dir), array('.','..')); 
+            if(is_array($files)){
+                foreach (@$files as $file) { 
+                    (is_dir("$dir/$file")) ? $this->delTree("$dir/$file") : unlink("$dir/$file"); 
+                } 
+                return @rmdir($dir); 
+            }else{
+                return false; 
+            }
         }
 
         public function onlineCheck(){
