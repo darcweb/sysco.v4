@@ -98,7 +98,7 @@ class System {
     }
     
     
-    public function objectConsult($queryString,$log=true){
+    public function objectQuery($queryString,$log=true){
         $result = NULL;
         $queryStringConsult = $this->prepareConsult($queryString);
         if($this->conn){

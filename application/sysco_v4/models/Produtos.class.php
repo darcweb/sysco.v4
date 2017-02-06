@@ -27,12 +27,21 @@ class Produtos {
     
     function insert($param) {
         
-        //print_r($this);
+        $result = "Nada foi feito!";
         
-        //print_r($this);
-        return "<br><br>Inseriu com sucesso...<br><br><br>";
-        //$query = $this->query("SELECT * FROM produtos WHERE type='destaque'");
-        //$count =
+        $query = "INSERT INTO ".$this->config['table']." (name,description,price,datetime,status)VALUE("
+                . "'".$param['name']."',"
+                . "'".$param['description']."',"
+                . "'".$this->sysco->functions->formatMoney($param['value'],'clean')."',"
+                . "'".$this->sysco->functions->datetimeSet()."',"
+                . "'1')";
+        if($this->sysco->objectQuery($query)){
+            $result = "Inserido com sucesso!";
+        }else{
+            $result = "Falha ao inserir!";
+        }
+
+        return $result;
         
     }
     

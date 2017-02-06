@@ -68,7 +68,7 @@ class Modeling {
 
         }else{
             
-            $this->system->objectConsult($string);
+            $this->system->objectQuery($string);
             
         }
         
@@ -129,7 +129,7 @@ class Modeling {
                     
                     foreach($matrizremoval as $field){
                         $queryalter = "ALTER TABLE `".$table."` DROP ".$field;
-                        $this->system->objectConsult($queryalter);
+                        $this->system->objectQuery($queryalter);
                     }
                     
                 }
@@ -186,7 +186,7 @@ class Modeling {
 
                         $queryalter = "ALTER TABLE `".$table."` ADD ".$setcolum.$settype.$setdefault.$setnull.$setextra.($setreference?" AFTER `".$setreference."`":"").";";
 
-                        $this->system->objectConsult($queryalter);
+                        $this->system->objectQuery($queryalter);
                         
                     }
                     
@@ -230,20 +230,20 @@ class Modeling {
                                     $setconfignull = "NOT NULL";
 
                                     $sqlexec = "ALTER TABLE ".$table." CHANGE ".$config['colum']." ".$config['colum']." ".$config['type']." ".$setconfignull.";";
-                                    $this->system->objectConsult($sqlexec);
+                                    $this->system->objectQuery($sqlexec);
 
                                     $sqlexec  = "ALTER TABLE ".$table." DROP PRIMARY KEY;";
-                                    $this->system->objectConsult($sqlexec);
+                                    $this->system->objectQuery($sqlexec);
 
                                 }else if(!$tablecurrentconfig['key'] && $config['key'] == 'PRI'){
 
                                     $setconfignull = "NOT NULL";
 
                                     $sqlexec = "ALTER TABLE ".$table." CHANGE ".$config['colum']." ".$config['colum']." ".$config['type']." ".$setconfignull." AUTO_INCREMENT;";
-                                    $this->system->objectConsult($sqlexec);
+                                    $this->system->objectQuery($sqlexec);
 
                                     $sqlexec = "ALTER TABLE ".$table." ADD PRIMARY KEY (".$config['colum'].");";
-                                    $this->system->objectConsult($sqlexec);
+                                    $this->system->objectQuery($sqlexec);
 
                                 }
 
@@ -302,7 +302,7 @@ class Modeling {
 
                             $queryalter = "ALTER TABLE `".$table."` CHANGE ".$colum." ".$setcolum.$settype.$setdefault.$setnull.$setextra.";";
 
-                            $this->system->objectConsult($queryalter);
+                            $this->system->objectQuery($queryalter);
 
                             $checkalter = false;
 
@@ -345,7 +345,7 @@ class Modeling {
                 
                 $queryprepare = "CREATE TABLE IF NOT EXISTS `".$table."` (".$fieldsquery.$primarykey.") ENGINE=".$engine." CHARACTER SET ".$charset." COLLATE ".$collation.";";
 
-                $this->system->objectConsult($queryprepare);
+                $this->system->objectQuery($queryprepare);
 
             }
             

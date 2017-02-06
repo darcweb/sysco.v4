@@ -14,18 +14,17 @@ class ProdutosController {
     
     function produtos(){
         
-        //print_r($this);
-        //var_dump($this->sysco->params);
-        print_r($this->sysco->objectCount("SELECT * FORM produtos"));
-        //print_r($this->produtos);
-        echo "<br><br>";
+        $data = array(
+            'name'=>'Teste',
+            'description'=>'Teste description',
+            'value'=>'5,60',
+        );
         
-        //print_r($this->produtos->insert());
-        echo $this->produtos->insert(array('teste1'=>'1','teste2'=>'2','teste3'=>'3'));//"<br><br>";
+        $result = $this->produtos->insert($data)."<br><br>";
         
-        $text = "Controller produtos <br/>";
+        echo $this->sysco->objectCount("SELECT * FROM produtos")."<br><br>";
         
-        return $text;
+        return $result;
         
     }
 
