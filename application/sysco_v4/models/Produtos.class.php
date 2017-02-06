@@ -27,19 +27,20 @@ class Produtos {
     
     function insert($param) {
         
+        //print_r($this);
+        return "Inseriu com sucesso...<br><br><br>";
         //$this->functions->objectQuery("");
         
     }
     
     function getitem(){
         
-        print_r($this);
-        echo "<br><br>";
-        var_dump($this->sysco->params);
-        var_dump($this->sysco->request->a);
-        var_dump($this->sysco);
-        
-        $result = "<br><br>Model produtos";
+        $item = array(
+            'name'=>'nome teste',
+            'description'=>'descricao teste',
+            'price'=>'10,00',
+        );
+        $result = $item;
         
         return $result;
         

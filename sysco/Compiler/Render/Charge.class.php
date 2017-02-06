@@ -19,6 +19,7 @@ class Charge {
     
     public $system = null;
     public $model = null;
+    public $modelobject = null;
     
     function __construct($build){
         
@@ -97,6 +98,8 @@ class Charge {
             $this->$class->$index = $value;
             
         }
+        
+        $this->modelobject = $this->$class;
         
         new Modeling($this,$this->$class);
         

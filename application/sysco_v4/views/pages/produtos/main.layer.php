@@ -3,7 +3,7 @@
 
 <br/>
 
-{{ print_r($this->Produtos->getitem()); }}
+{{ print_r($this->Produtos->getitem()['name']); }}
 
 <br/><br/>
 

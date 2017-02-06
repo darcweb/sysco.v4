@@ -18,6 +18,7 @@ class Flow {
     
     public $system = null;
     public $model = null;
+    public $modelobject = null;
     public $controller = null;
     
     function __construct($build){
@@ -25,9 +26,7 @@ class Flow {
         $this->system = $build->system;
         $model = $build->model;
         $this->model = $model;
-        $this->$model = $build->$model;
-        
-        //print_r($this->$model);
+        $this->modelobject = $build->modelobject;
         
         $this->init();
         
@@ -86,7 +85,7 @@ class Flow {
     
     private function proccess($classname){
         
-        $this->$classname = new $classname($this->system);
+        $this->$classname = new $classname($this->system,$this->modelobject);
         $this->setobject($this->$classname,$classname);
         
     }

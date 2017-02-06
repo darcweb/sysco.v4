@@ -22,6 +22,7 @@ class Sights {
     protected $functions = null;
     protected $system = null;
     protected $model = null;
+    protected $modelobject = null;
     protected $controller = null;
     protected $request = null;
     protected $globalvars = null;
@@ -36,7 +37,8 @@ class Sights {
         
         $model = $build->model;
         $this->model = $model;
-        $this->$model = $build->$model;
+        $this->modelobject = $build->modelobject;
+        $this->$model = $this->modelobject;
         
         $controller = $build->controller;
         $this->controller = $controller;
