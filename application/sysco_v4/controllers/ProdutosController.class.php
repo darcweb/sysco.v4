@@ -16,7 +16,7 @@ class ProdutosController {
          
         //print_r($this);
         //var_dump($this->sysco->params);
-        print_r($this->sysco->functions->caseDate());
+        print_r($this->sysco->objectCount());
         //print_r($this->produtos);
         echo "<br><br>";
         

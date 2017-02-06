@@ -108,6 +108,7 @@ class Modeling {
     }
 
     function objectList($queryString,$log=true){
+        
         $result = "";
         $queryStringList = $this->prepareConsult($queryString);
         
@@ -121,6 +122,7 @@ class Modeling {
         }
         
         return $result;
+        
     }
 
     private function adjustTable($table,$string,$log=true){
