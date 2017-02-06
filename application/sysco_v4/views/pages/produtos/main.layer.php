@@ -29,13 +29,13 @@ Loop de arrays:<br/>
 
 Loop com sintaxe for:<br/>
 
-{{ for($i = 0; $i < 5; $i++): }}
+{{ for($i = 0; $i < 5; $i++){ }}
 
 <div>
     {{ echo $i; }}<br/>
 </div>
 
-{{ endfor; }}
+{{ } }}
 
 <br/><br/>
 
