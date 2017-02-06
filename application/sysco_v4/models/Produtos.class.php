@@ -27,7 +27,7 @@ class Produtos {
     
     function insert($param) {
         
-        print_r($this);
+        //print_r($this);
         
         //print_r($this);
         return "<br><br>Inseriu com sucesso...<br><br><br>";

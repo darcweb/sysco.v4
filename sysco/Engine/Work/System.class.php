@@ -14,6 +14,8 @@ namespace Sysco\Engine\Work;
 use Sysco\Engine\Utils\Functions;
 use Sysco\Http\Request;
 use Sysco\Compiler\Render\Charge;
+use Sysco\Engine\Work\Connect;
+use PDO;
 
 class System {
     
@@ -26,6 +28,16 @@ class System {
         $request,
         $functions;
 
+    private $conn = null;
+    private $connsetup = array(
+            'driver' => 'mysql',
+            'host' => 'localhost',
+            'port' => '3306',
+            'user' => 'root',
+            'password' => '',
+            'database' => '',
+        );
+    
     function __construct() {
         
         $this->SPATH = DIRECTORY_SEPARATOR;
@@ -41,11 +53,91 @@ class System {
         $this->functions = new Functions($this);
         
         $this->request = new Request($this);
+
+        $this->prepareConnect();
         
         return $this->init();
         
     }
     
+    private function prepareConnect(){
+        
+        if($this->functions->onlineCheck()){
+            foreach($this->connsetup as $index => $value){
+                $this->connsetup[$index] = $this->params[$_SERVER['SYSTEM']]['onlinedb'][$index];
+            }
+        }else{
+            foreach($this->connsetup as $index => $value){
+                $this->connsetup[$index] = $this->params[$_SERVER['SYSTEM']]['localdb'][$index];
+            }
+        }
+        
+        $connect = new Connect($this->connsetup);
+        $this->conn = $connect->getConnect();
+        
+    }
+    
+    private function prepareConsult($string=''){
+        
+        return $string;
+        
+    }
+
+    public function objectCount($queryString){
+        
+        echo "teste<br><br>";
+        
+        $result = NULL;
+
+        $queryStringCount = $this->prepareConsult($queryString);
+        if($this->conn){
+            $prepareQuery = $this->conn->prepare($queryStringCount);
+            $prepareQuery->execute();
+            $result = $prepareQuery->rowCount();
+        }
+        
+        return $result;
+    }
+    
+    
+    public function objectConsult($queryString,$log=true){
+        $result = NULL;
+        $queryStringConsult = $this->prepareConsult($queryString);
+        if($this->conn){
+
+            $prepareQuery = $this->conn->prepare($queryStringConsult);
+            $prepareQuery->execute();
+            $databaseErrors = $prepareQuery->errorInfo();
+            if($databaseErrors[2]){
+                /*echo '<pre>';
+                print_r($databaseErrors[2]);
+                echo '</pre>';*/
+            }else{
+                $result = $prepareQuery;
+            }
+
+        }
+        return $result;
+    }
+
+    public function objectList($queryString,$log=true){
+        
+        $result = "";
+        $queryStringList = $this->prepareConsult($queryString);
+        
+        if($this->conn){
+        
+            $prepareQuery = $this->conn->prepare($queryStringList);
+            $prepareQuery->execute();
+            
+            $result = $prepareQuery;
+            
+        }
+        
+        return $result;
+        
+    }
+
     private function includeSetup($fileInclude){
         
         $currentinclude = $this->rootPath.$fileInclude;

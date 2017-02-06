@@ -20,22 +20,10 @@ class Modeling {
     public $system = null;
     public $model = null;
     
-    private $conn = null;
-    private $connsetup = array(
-            'driver' => 'mysql',
-            'host' => 'localhost',
-            'port' => '3306',
-            'user' => 'root',
-            'password' => '',
-            'database' => '',
-        );
-    
     function __construct($build,$model){
         
         $this->system = $build->system;
         $this->model = $model;
-        
-        $this->prepareConnect();
         
         $this->init();
         
@@ -49,92 +37,16 @@ class Modeling {
         return $result;
     }
 
-    private function prepareConnect(){
-        
-        if($this->system->functions->onlineCheck()){
-            foreach($this->connsetup as $index => $value){
-                $this->connsetup[$index] = $this->system->params[$_SERVER['SYSTEM']]['onlinedb'][$index];
-            }
-        }else{
-            foreach($this->connsetup as $index => $value){
-                $this->connsetup[$index] = $this->system->params[$_SERVER['SYSTEM']]['localdb'][$index];
-            }
-        }
-        
-        $connect = new Connect($this->connsetup);
-        $this->conn = $connect->getConnect();
-        
-    }
-    
-    private function prepareConsult($string=''){
-        
-        return $string;
-        
-    }
-
-    private function objectCount($queryString){
-        
-        $result = NULL;
-
-        $queryStringCount = $this->prepareConsult($queryString);
-        if($this->conn){
-            $prepareQuery = $this->conn->prepare($queryStringCount);
-            $prepareQuery->execute();
-            $result = $prepareQuery->rowCount();
-        }
-        
-        return $result;
-    }
-    
-    
-    private function objectConsult($queryString,$log=true){
-        $result = NULL;
-        $queryStringConsult = $this->prepareConsult($queryString);
-        if($this->conn){
-
-            $prepareQuery = $this->conn->prepare($queryStringConsult);
-            $prepareQuery->execute();
-            $databaseErrors = $prepareQuery->errorInfo();
-            if($databaseErrors[2]){
-                /*echo '<pre>';
-                print_r($databaseErrors[2]);
-                echo '</pre>';*/
-            }else{
-                $result = $prepareQuery;
-            }
-
-        }
-        return $result;
-    }
-
-    function objectList($queryString,$log=true){
-        
-        $result = "";
-        $queryStringList = $this->prepareConsult($queryString);
-        
-        if($this->conn){
-        
-            $prepareQuery = $this->conn->prepare($queryStringList);
-            $prepareQuery->execute();
-            
-            $result = $prepareQuery;
-            
-        }
-        
-        return $result;
-        
-    }
-
     private function adjustTable($table,$string,$log=true){
        
         $result = NULL;
         $executeQuery=true;
         
-        $checktable = $this->objectCount("SHOW TABLES LIKE '".$table."'");
+        $checktable = $this->system->objectCount("SHOW TABLES LIKE '".$table."'");
         if($checktable>0){
             
             $currentfields = count($this->model->fields);
-            $showcolumns = $this->objectCount("SHOW COLUMNS FROM ".$table);
+            $showcolumns = $this->system->objectCount("SHOW COLUMNS FROM ".$table);
             $newlines = array();
             
             if($showcolumns > $currentfields){
@@ -147,7 +59,7 @@ class Modeling {
                 
             }
             
-            $result = $this->objectList("SHOW COLUMNS FROM ".$table,false);//"SELECT ".$getCol." FROM ".$tablealter);
+            $result = $this->system->objectList("SHOW COLUMNS FROM ".$table,false);//"SELECT ".$getCol." FROM ".$tablealter);
             while($data = $result->fetch(PDO::FETCH_OBJ)){
                 
                 $tableactualfield[] = $this->charSet($data->Field);
@@ -156,7 +68,7 @@ class Modeling {
 
         }else{
             
-            $this->objectConsult($string);
+            $this->system->objectConsult($string);
             
         }
         
@@ -180,11 +92,11 @@ class Modeling {
         
         if($table != ""){
             
-            $checktable = $this->objectCount("SHOW TABLES LIKE '".$table."'");
+            $checktable = $this->system->objectCount("SHOW TABLES LIKE '".$table."'");
             if($checktable>0){
 
                 $currentfields = count($this->model->fields);
-                $showcolumns = $this->objectCount("SHOW COLUMNS FROM ".$table);
+                $showcolumns = $this->system->objectCount("SHOW COLUMNS FROM ".$table);
                 $newlines = array();
                 
                 if($showcolumns > $currentfields){
@@ -193,7 +105,7 @@ class Modeling {
                     $matrizremoval = array();
                     
                     $xcount = 0;
-                    $result = $this->objectList("SHOW COLUMNS FROM ".$table,false);
+                    $result = $this->system->objectList("SHOW COLUMNS FROM ".$table,false);
                     while($data = $result->fetch(PDO::FETCH_OBJ)){
 
                         $matriztable[$xcount] = $data->Field;
@@ -217,7 +129,7 @@ class Modeling {
                     
                     foreach($matrizremoval as $field){
                         $queryalter = "ALTER TABLE `".$table."` DROP ".$field;
-                        $this->objectConsult($queryalter);
+                        $this->system->objectConsult($queryalter);
                     }
                     
                 }
@@ -230,7 +142,7 @@ class Modeling {
                     $matrizadd = array();
                             
                     $xcount = 0;
-                    $result = $this->objectList("SHOW COLUMNS FROM ".$table,false);
+                    $result = $this->system->objectList("SHOW COLUMNS FROM ".$table,false);
                     while($data = $result->fetch(PDO::FETCH_OBJ)){
         
                         $matriztable[$xcount] = $data->Field;
@@ -274,7 +186,7 @@ class Modeling {
 
                         $queryalter = "ALTER TABLE `".$table."` ADD ".$setcolum.$settype.$setdefault.$setnull.$setextra.($setreference?" AFTER `".$setreference."`":"").";";
 
-                        $this->objectConsult($queryalter);
+                        $this->system->objectConsult($queryalter);
                         
                     }
                     
@@ -285,7 +197,7 @@ class Modeling {
                 $queryalter = "";
 
                 $xcurrent = 0;
-                $result = $this->objectList("SHOW COLUMNS FROM ".$table,false);
+                $result = $this->system->objectList("SHOW COLUMNS FROM ".$table,false);
                 while($data = $result->fetch(PDO::FETCH_OBJ)){
 
                     $tablecurrentconfig = array();
@@ -318,20 +230,20 @@ class Modeling {
                                     $setconfignull = "NOT NULL";
 
                                     $sqlexec = "ALTER TABLE ".$table." CHANGE ".$config['colum']." ".$config['colum']." ".$config['type']." ".$setconfignull.";";
-                                    $this->objectConsult($sqlexec);
+                                    $this->system->objectConsult($sqlexec);
 
                                     $sqlexec  = "ALTER TABLE ".$table." DROP PRIMARY KEY;";
-                                    $this->objectConsult($sqlexec);
+                                    $this->system->objectConsult($sqlexec);
 
                                 }else if(!$tablecurrentconfig['key'] && $config['key'] == 'PRI'){
 
                                     $setconfignull = "NOT NULL";
 
                                     $sqlexec = "ALTER TABLE ".$table." CHANGE ".$config['colum']." ".$config['colum']." ".$config['type']." ".$setconfignull." AUTO_INCREMENT;";
-                                    $this->objectConsult($sqlexec);
+                                    $this->system->objectConsult($sqlexec);
 
                                     $sqlexec = "ALTER TABLE ".$table." ADD PRIMARY KEY (".$config['colum'].");";
-                                    $this->objectConsult($sqlexec);
+                                    $this->system->objectConsult($sqlexec);
 
                                 }
 
@@ -390,7 +302,7 @@ class Modeling {
 
                             $queryalter = "ALTER TABLE `".$table."` CHANGE ".$colum." ".$setcolum.$settype.$setdefault.$setnull.$setextra.";";
 
-                            $this->objectConsult($queryalter);
+                            $this->system->objectConsult($queryalter);
 
                             $checkalter = false;
 
@@ -433,7 +345,7 @@ class Modeling {
                 
                 $queryprepare = "CREATE TABLE IF NOT EXISTS `".$table."` (".$fieldsquery.$primarykey.") ENGINE=".$engine." CHARACTER SET ".$charset." COLLATE ".$collation.";";
 
-                $this->objectConsult($queryprepare);
+                $this->system->objectConsult($queryprepare);
 
             }
             

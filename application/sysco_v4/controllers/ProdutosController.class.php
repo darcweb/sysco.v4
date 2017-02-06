@@ -13,10 +13,10 @@ class ProdutosController {
     }
     
     function produtos(){
-         
+        
         //print_r($this);
         //var_dump($this->sysco->params);
-        print_r($this->sysco->objectCount());
+        print_r($this->sysco->objectCount("SELECT * FORM produtos"));
         //print_r($this->produtos);
         echo "<br><br>";
         

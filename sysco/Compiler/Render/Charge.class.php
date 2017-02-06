@@ -24,7 +24,7 @@ class Charge {
     function __construct($build){
         
         $this->system = $build;
-        
+       
         $this->init();
         
     }
@@ -101,7 +101,7 @@ class Charge {
         
         $this->modelobject = $this->$class;
          
-        new Modeling($this,$this->$class);
+        new Modeling($this,$this->modelobject);
         
     }
     
