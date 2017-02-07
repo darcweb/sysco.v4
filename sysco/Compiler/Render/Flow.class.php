@@ -36,7 +36,7 @@ class Flow {
         
         $pathfile = dirname(__FILE__);
         $pathEx = explode($this->system->SPATH.$_SERVER['SYSTEM'].$this->system->SPATH,$pathfile);
-        $pathset = $pathEx[0].$this->system->SPATH.'application'.$this->system->SPATH;
+        $pathset = $pathEx[0].$this->system->SPATH.'applications'.$this->system->SPATH;
         $pathclass = $pathset.$this->system->params[$_SERVER['SYSTEM']]['application'].$this->system->SPATH.'controllers'.$this->system->SPATH;
         
         if(is_dir($pathclass)){

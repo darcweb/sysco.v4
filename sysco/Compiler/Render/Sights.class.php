@@ -60,7 +60,7 @@ class Sights {
 
     private function setIndex() {
         
-        $this->setindex = $this->layer("application." . $this->system->params[$_SERVER['SYSTEM']]['application'] . ".theme." . $this->system->params[$_SERVER['SYSTEM']]['setindex']);
+        $this->setindex = $this->layer("applications." . $this->system->params[$_SERVER['SYSTEM']]['application'] . ".theme." . $this->system->params[$_SERVER['SYSTEM']]['setindex']);
         
         return $this->setindex;
         
@@ -71,7 +71,7 @@ class Sights {
         $result = "";
 
         $setway = "";
-        $checkway = "application." . $this->system->params[$_SERVER['SYSTEM']]['application'].".pages";
+        $checkway = "applications." . $this->system->params[$_SERVER['SYSTEM']]['application'].".pages";
         $rowback = false;
         $isdir = false;
         $x = 1;
