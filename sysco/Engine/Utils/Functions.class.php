@@ -4,11 +4,11 @@ namespace Sysco\Engine\Utils;
 class Functions {
 
         public $saslog;
-        public $system;
+        public $sysco;
 
-        function __construct($sys){
+        function __construct($sysco){
 
-            $this->system = $sys;
+            $this->sysco = $sysco;
 
         }
 
@@ -25,7 +25,7 @@ class Functions {
         }
 
         public function onlineCheck(){
-            if(strpos($this->system->params[$_SERVER['SYSTEM']]['domain'],$this->system->params[$_SERVER['SYSTEM']]['baseurl']) !== false){
+            if(strpos($this->sysco->params[$_SERVER['SYSTEM']]['domain'],$this->sysco->params[$_SERVER['SYSTEM']]['baseurl']) !== false){
                 return true;
             }else{
                 return false;
@@ -69,7 +69,7 @@ class Functions {
 
         function generateAccountCode($userID){
                 $number = rand(0,9).rand(0,9).rand(0,9).$userID.rand(0,9);
-                $rowcod = $this->objectQuery("SELECT * FROM sysco_accounts WHERE token='".$number."' and token!=''");
+                $rowcod = $this->sysco->objectQuery("SELECT * FROM sysco_accounts WHERE token='".$number."' and token!=''");
                 if($rowcod->id!=""){
                         $codRestore = $this->restoreAccountCode($userID);
                 } else {
@@ -344,14 +344,14 @@ class Functions {
                          ) ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci;",false);
 
                 $queryRoot = "SELECT * FROM `".$showTable."` WHERE id='1'";
-                $checkRoot = $this->objectCount($queryRoot);
+                $checkRoot = $this->sysco->objectCount($queryRoot);
                 if(!$checkRoot){
-                        $this->objectConsult("INSERT INTO `".$showTable."` VALUES('0','0','root','Darc Web','root','sysco123pass','contato@darcweb.com.br','(66) 3531-4112','(66) 9603-9842','','Sinop','MT','BR','','','','".$this->datetimeSet()."','1')",false);
-                        $this->objectConsult("INSERT INTO `".$showTable."` VALUES('0','1','admin','Administrador','admin','admin','email@email.com.br','(66) 3531-4112','(66) 9603-9842','','Sinop','MT','BR','','','','".$this->datetimeSet()."','1')",false);
+                        $this->sysco->objectConsult("INSERT INTO `".$showTable."` VALUES('0','0','root','Darc Web','root','sysco123pass','contato@darcweb.com.br','(66) 3531-4112','(66) 9603-9842','','Sinop','MT','BR','','','','".$this->datetimeSet()."','1')",false);
+                        $this->sysco->objectConsult("INSERT INTO `".$showTable."` VALUES('0','1','admin','Administrador','admin','admin','email@email.com.br','(66) 3531-4112','(66) 9603-9842','','Sinop','MT','BR','','','','".$this->datetimeSet()."','1')",false);
                 }
 
                 $queryUser = "SELECT * FROM `".$showTable."` WHERE token='".$this->thisToken()."' and token!=''";
-                $getUser = $this->objectQuery($queryUser);
+                $getUser = $this->sysco->objectQuery($queryUser);
 
                 if($dataGet==''){
                         $result = $getUser->id;
@@ -453,7 +453,7 @@ class Functions {
 
                 $querySess = "SELECT * FROM `".$showTable."_devices` 
                                                 WHERE device='".$this->userAgent()."' and deviceid='".$this->thisDevice()."' and token='".$this->thisToken()."' and token!=''";
-                $getSess = $this->objectQuery($querySess);
+                $getSess = $this->sysco->objectQuery($querySess);
 
                 $queryUser = "SELECT acc.*, 
                                                    accmail.email AS email, 
@@ -498,7 +498,7 @@ class Functions {
                                         WHERE acc.id='".$getSess->user."'
                                         ORDER BY acc.id DESC";//"SELECT * FROM `".$showTable."` WHERE id='".$getSess->user."'";
 
-                $getUser = $this->objectQuery($queryUser);
+                $getUser = $this->sysco->objectQuery($queryUser);
                 if($dataGet==''){
                         $result = $getSess;
                 }else{
@@ -560,7 +560,7 @@ class Functions {
                                         WHERE acc.id='".$userGet."'
                                         ORDER BY acc.id DESC";//"SELECT * FROM `".$showTable."` WHERE id='".$getSess->user."'";
 
-                $getUser = $this->objectQuery($queryUser);
+                $getUser = $this->sysco->objectQuery($queryUser);
 
                 return $getUser;
         }
@@ -580,9 +580,9 @@ class Functions {
                                 PRIMARY KEY(id) 
                          ) ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci;";
 
-                $createTableLog = $this->objectConsult($createLog,false);
+                $createTableLog = $this->sysco->objectConsult($createLog,false);
 
-                $showLog = $this->objectConsult("INSERT INTO `".$showTable."` VALUES(
+                $showLog = $this->sysco->objectConsult("INSERT INTO `".$showTable."` VALUES(
                         '0',
                         '".$this->saslog->id."',
                         'log',
@@ -592,224 +592,7 @@ class Functions {
                         '".$this->datetimeSet()."',
                         '1'
                 )",false);
-                //$showLog = $this->objectConsult("INSERT INTO `".$showTable."` (id)VALUES('')",false);
-        }
-
-        function queryStructure($string,$log=true){
-                $result = NULL;
-                if($this->dbLiberty($queryString)){
-                        $executeQuery=true;
-                        if(strpos($string, "SELECT") === false && strpos($string, "CREATE TABLE") === false && $log){
-                                $strExOne = explode(' ', $string);
-                                $setAction = $strExOne[0];
-                                $strEx = explode($_SERVER['SYSTEM'], $string);
-                                $strExSet = explode(' ', $strEx[1]);
-
-                                $showTableLog = $_SERVER['SYSTEM'].$strExSet[0];
-                                $showTitleLog = 'Log de consulta SQL - '.$setAction;
-                                $showContentLog = $this->secure($string);
-                                $this->sysLog(0,$showTableLog,$showTitleLog,$showContentLog);
-                        }else if(strpos($string, "CREATE TABLE") !== false){
-                                $lines = explode("\n", $string);
-                                $countlines = count($lines);
-                                $tablealterEx = explode('(',$lines[0]);
-                                $tablealterExEx = explode(' ',$tablealterEx[0]);
-                                $tablealter = str_replace('`','',$tablealterExEx[count($tablealterExEx)-2]);
-                                $checktable = $this->objectCount("SHOW TABLES LIKE '".$tablealter."'");
-
-                                if($checktable>0){
-                                        $showcolumns = $this->objectCount("SHOW COLUMNS FROM ".$tablealter);
-                                        $newlines = array();
-                                        foreach($lines as $il=>$vl){
-                                                if($il>0 && $il<(count($lines)-2)){
-                                                        $newlines[] = $vl;
-                                                }
-                                        }
-                                        $tableactual = array();
-                                        $tableactualfield = array();
-                                        $result = $this->objectList("SHOW COLUMNS FROM ".$tablealter,false);//"SELECT ".$getCol." FROM ".$tablealter);
-                                        while($data = $result->fetch(PDO::FETCH_OBJ)){
-                                                $tableactual[] = "`".$data->Field."` ".$data->Type;
-                                                $tableactualfield[] = $this->charSet($data->Field);
-                                        }
-                                        $tablenew = array();
-                                        $tablenewfield = array();
-                                        $tablecompletnew = array();
-                                        if(is_array($newlines)){
-                                                foreach($newlines as $iln=>$vln){
-                                                        $getColEx = explode(' ',$vln);
-                                                        if($this->charSet($getColEx[0])!=''){
-                                                                $getCol = "`".$this->charSet($getColEx[0])."` ".$getColEx[1];
-                                                                $tablenew[] = $getCol;
-                                                                $tablenewfield[] = $this->charSet($getColEx[0]);
-                                                                $getComEx = explode($getColEx[1],$vln);
-                                                                $tablecompletnew[] = $getComEx[1];
-                                                        }
-                                                }
-                                        }
-                                        $tableupdate = array();
-                                        if(count($tableactual)==count($tablenew)){
-                                                $sumadd=0;
-                                                foreach($tableactual as $ictn=>$vctn){
-                                                        if($tableactual[$ictn] == $tablenew[$ictn-$sumadd]){
-                                                                $tableupdate[] = $tablenew[$ictn]." ".$tablecompletnew[$ictn];
-                                                        }else if($tableactualfield[$ictn]){
-                                                                $queryalter = "ALTER TABLE `".$tablealter."` CHANGE ".$tableactualfield[$ictn]." ".$tablenew[$ictn]." ".str_replace(',','',$tablecompletnew[$ictn]);
-                                                                $this->objectConsult($queryalter,false);
-                                                                $sumadd++;
-                                                        }
-                                                }
-                                        }else if(count($tableactual)>count($tablenew)){
-                                                $sumadd=0;
-                                                foreach($tableactual as $ictn=>$vctn){
-                                                        if($tableactualfield[$ictn] == $tablenewfield[$ictn-$sumadd]){
-                                                                $tableupdate[] = $tablenew[$ictn]." ".$tablecompletnew[$ictn];
-                                                        }else if($tableactualfield[$ictn] && $sumadd==0){
-                                                                $queryalter = "ALTER TABLE `".$tablealter."` DROP ".$tableactualfield[$ictn];
-                                                                $this->objectConsult($queryalter,false);
-                                                                $sumadd++;
-                                                        }
-                                                }
-                                        }else{
-                                                $sumadd=0;
-                                                foreach($tablenew as $ictn=>$vctn){
-                                                        if(strpos($tablenew[$ictn], $tableactual[$ictn-$sumadd]) !== false){
-                                                                $tableupdate[] = $tablenew[$ictn]." ".$tablecompletnew[$ictn];
-                                                                $sumadd=0;
-                                                        }else{
-                                                                $reference = $tablenewfield[$ictn-1];
-                                                                $queryalter = "ALTER TABLE `".$tablealter."` ADD ".$tablenew[$ictn]." ".str_replace(',','',$tablecompletnew[$ictn]).($reference?" AFTER `".$reference."`":"");
-                                                                //echo $queryalter;
-                                                                $this->objectConsult($queryalter,false);
-                                                                if(!$reference){
-                                                                         $this->objectConsult("ALTER TABLE `".$tablealter."` ADD PRIMARY KEY (".$tableset.")",false);
-                                                                }
-                                                                $sumadd++;
-                                                        }
-                                                }
-                                        }
-                                        $executeQuery=false;
-                                }
-                        }
-                }
-        }
-
-        function objectConsult($queryString,$log=true){
-                $result = NULL;
-                if($this->dbLiberty($queryString)){
-                        $queryStringConsult = $this->prepareConsult($queryString);
-                        if($this->conn){
-                                $this->queryStructure($queryStringConsult,$log);
-                                $prepareQuery = $this->conn->prepare($queryStringConsult);
-                                $prepareQuery->execute();
-                                $databaseErrors = $prepareQuery->errorInfo();
-                                if($databaseErrors[2]){
-                                        /*echo '<pre>';
-                                        print_r($databaseErrors[2]);
-                                        echo '</pre>';*/
-                                }else{
-                                        $result = $prepareQuery;
-                                }
-                        }
-                }
-                return $result;
-        }
-
-        function objectCount($queryString){
-                $result = NULL;
-                if($this->dbLiberty($queryString)){
-                        $queryStringCount = $this->prepareConsult($queryString);
-                        if($this->conn){
-                                $prepareQuery = $this->conn->prepare($queryStringCount);
-                                $prepareQuery->execute();
-                                $result = $prepareQuery->rowCount();
-                        }
-                }
-                return $result;
-        }
-
-        function objectQuery($queryString,$log=true){
-                $result = NULL;
-                if($this->dbLiberty($queryString)){
-                        $queryStringQuery = $this->prepareConsult($queryString);
-                        if($this->conn){
-                                $this->queryStructure($queryStringQuery,$log);
-                                $prepareQuery = $this->conn->prepare($queryStringQuery);
-                                $prepareQuery->execute();
-                                $result = $prepareQuery->fetch(PDO::FETCH_OBJ);
-                        }
-                }
-                return $result;
-        }
-
-        function objectList($queryString,$log=true){
-                $result = NULL;
-                if($this->dbLiberty($queryString)){
-                        $queryStringList = $this->prepareConsult($queryString);
-                        if($this->conn){
-                                $this->queryStructure($queryStringList,$log);
-                                $prepareQuery = $this->conn->prepare($queryStringList);
-                                $prepareQuery->execute();
-                                $result = $prepareQuery;
-                        }
-                }
-                return $result;
-        }
-
-        function query($queryString,$log=true){
-                $result = NULL;
-                if($this->dbLiberty($queryString)){
-                        $queryStringQue = $this->prepareConsult($queryString);
-                        $result = $this->objectQuery($queryStringQue,$log);
-                }
-                return $result;
-        }
-
-        public function objectPaginator($queryString){
-                $result = NULL;
-                if($this->dbLiberty($queryString)){
-                        $queryStringPag = $this->prepareConsult($queryString);
-                        $queryMont = substr($queryStringPag, 0, strpos($queryStringPag, 'LIMIT'));
-                        $result = $this->objectCount($queryMont);
-                }
-                return $result;
-        }
-
-        function prepareConsult($string=''){
-                if(strpos($string,'TABLE') === false && strpos($string,'INSERT') === false && strpos($string,'JOIN') === false && $this->saslog->type!='root'){
-                        if($string){
-                                $strExOne = explode(' ', $string);
-                                $setAction = $strExOne[0];
-                                $strEx = explode($_SERVER['SYSTEM'], $string);
-                                $strExSet = explode(' ', $strEx[1]);
-
-                                $showTable = $_SERVER['SYSTEM'].$strExSet[0];
-
-                                if(strpos($string, "status!='7'") === false){
-                                        if(strpos($string, "WHERE") === false){
-                                                $stringSet = str_replace($showTable." ", $showTable." WHERE status!='7' ", $string);
-                                        }else{
-                                                $whereEx = explode('WHERE', $string);
-                                                $spaceEx = explode(' ', $whereEx[1]);
-                                                $finalSet = false;
-                                                foreach($spaceEx as $xval){
-                                                        $finalityStr = array("ORDER", "order", "GROUP", "group", "LIMIT", "limit");
-                                                        foreach($finalityStr as $xvalSpace){
-                                                                if($xval == $xvalSpace && $finalSet == false){
-                                                                        $finalSet = true;
-                                                                }
-                                                        }
-                                                        if($finalSet == false){
-                                                                $mountStr .= $xval." ";
-                                                        }
-                                                }
-                                                $stringSet = str_replace($mountStr, " (".$mountStr.") and status!='7' ", $string);
-                                        }
-                                        $string = $stringSet;
-                                }		
-                        }
-                }
-                return $string;
+                //$showLog = $this->sysco->objectConsult("INSERT INTO `".$showTable."` (id)VALUES('')",false);
         }
 
         function dbLiberty($string){
@@ -822,7 +605,7 @@ class Functions {
         }
 
         public function configuration($type, $config, $item=''){
-                $object = $this->objectQuery("SELECT * FROM sysco_configurations WHERE type='".$type."' and config='".$config."' ");
+                $object = $this->sysco->objectQuery("SELECT * FROM sysco_configurations WHERE type='".$type."' and config='".$config."' ");
                 if($object->id != ""){
                         if($object->value == 'noedit'){
                                 $return = $object->status;
