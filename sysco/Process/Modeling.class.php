@@ -36,43 +36,6 @@ class Modeling {
         }
         return $result;
     }
-
-    private function adjustTable($table,$string,$log=true){
-       
-        $result = NULL;
-        $executeQuery=true;
-        
-        $checktable = $this->system->objectCount("SHOW TABLES LIKE '".$table."'");
-        if($checktable>0){
-            
-            $currentfields = count($this->model->fields);
-            $showcolumns = $this->system->objectCount("SHOW COLUMNS FROM ".$table);
-            $newlines = array();
-            
-            if($showcolumns > $currentfields){
-                
-                
-                
-            }else if($showcolumns < $currentfields){
-                
-                
-                
-            }
-            
-            $result = $this->system->objectList("SHOW COLUMNS FROM ".$table,false);//"SELECT ".$getCol." FROM ".$tablealter);
-            while($data = $result->fetch(PDO::FETCH_OBJ)){
-                
-                $tableactualfield[] = $this->charSet($data->Field);
-
-            }
-
-        }else{
-            
-            $this->system->objectQuery($string);
-            
-        }
-        
-    }
     
     private $execmodel = 0;
     private function changeTable(){
@@ -93,6 +56,8 @@ class Modeling {
         if($table != ""){
             
             $checktable = $this->system->objectCount("SHOW TABLES LIKE '".$table."'");
+            //echo $table;
+            
             if($checktable>0){
 
                 $currentfields = count($this->model->fields);
@@ -315,8 +280,6 @@ class Modeling {
                     $xcurrent++;
                 }
 
-                $queryprepare = $queryalter;
-
             }else{
                 
                 $fieldsquery = "";
@@ -331,7 +294,7 @@ class Modeling {
                     $default = isset($config['default'])?$config['default']:'';
                     $extra = isset($config['extra'])?$config['extra']:'';
 
-                    $fieldsquery = "`".$colum."` ".$type." ".($default!=''?"DEFAULT '".$default."'":"")." ".($null=="YES"&&$key==""?"NULL":"NOT NULL")." ".($key=="PK"?'auto_increment':'').", ";
+                    $fieldsquery .= "`".$colum."` ".$type." ".($default!=''?"DEFAULT '".$default."'":"")." ".($null=="YES"&&$key==""?"NULL":"NOT NULL")." ".($key=="PK"?'auto_increment':'').", ";
 
                     if($key == "PK"){
                         
@@ -344,7 +307,9 @@ class Modeling {
                 $fieldsquery = ($primarykey == ""?substr($fieldsquery,0,-2):$fieldsquery);
                 
                 $queryprepare = "CREATE TABLE IF NOT EXISTS `".$table."` (".$fieldsquery.$primarykey.") ENGINE=".$engine." CHARACTER SET ".$charset." COLLATE ".$collation.";";
-
+                
+                //echo $queryprepare." - ";
+                
                 $this->system->objectQuery($queryprepare);
 
             }

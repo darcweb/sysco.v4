@@ -7,10 +7,6 @@
 
 <br/><br/>
 
-{{ print_r($this->ProdutosController->produtos()); }}
-
-<br/><br/>
-
 Loop de arrays:<br/>
 
 {{ foreach($this->request->gets as $item){ }}

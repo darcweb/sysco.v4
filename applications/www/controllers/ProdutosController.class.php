@@ -22,6 +22,8 @@ class ProdutosController {
         
         $result = $this->produtos->insert($data)."<br><br>";
         
+        //$this->sysco->functions
+                
         echo $this->sysco->objectCount("SELECT * FROM produtos")."<br><br>";
         
         return $result;

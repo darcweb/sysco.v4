@@ -16,11 +16,12 @@ use Sysco\Proccess\GlobalVars;
 
 class Sights {
     
+    private $loadcontinue = true;
     protected $setindex = "";
     protected static $codehtml = "";
     protected $viewspath = array("theme","pages");
     protected $functions = null;
-    protected $system = null;
+    protected $sysco = null;
     protected $model = null;
     protected $modelobject = null;
     protected $controller = null;
@@ -33,7 +34,7 @@ class Sights {
         
         $this->compileid = uniqid().time();
         
-        $this->system = $build->system;
+        $this->sysco = $build->sysco;
         
         $model = $build->model;
         $this->model = $model;
@@ -44,9 +45,9 @@ class Sights {
         $this->controller = $controller;
         $this->$controller = $build->$controller;
         
-        $this->request = $this->system->request;
+        $this->request = $this->sysco->request;
         $this->globalvars = new GlobalVars($this->request);
-        $this->functions = $this->system->functions;
+        $this->functions = $this->sysco->functions;
         
         $this->init();
         
@@ -60,7 +61,7 @@ class Sights {
 
     private function setIndex() {
         
-        $this->setindex = $this->layer("applications." . $this->system->params[$_SERVER['SYSTEM']]['application'] . ".theme." . $this->system->params[$_SERVER['SYSTEM']]['setindex']);
+        $this->setindex = $this->layer("applications." . $this->sysco->request->application . ".theme." . $this->sysco->params[$_SERVER['SYSTEM']]['setindex']);
         
         return $this->setindex;
         
@@ -71,7 +72,7 @@ class Sights {
         $result = "";
 
         $setway = "";
-        $checkway = "applications." . $this->system->params[$_SERVER['SYSTEM']]['application'].".pages";
+        $checkway = "applications." . $this->sysco->request->application.".pages";
         $rowback = false;
         $isdir = false;
         $x = 1;
@@ -83,7 +84,7 @@ class Sights {
                 
                 foreach($this->viewspath as $pathview){
                     
-                    if($pathview == "pages"){
+                    if($pathview == "pages" && $this->request->application != $get){
                         
                         $checkway .= ".".$get; 
                         $checkmain = $checkway.".main";
@@ -141,33 +142,33 @@ class Sights {
         
         if($x <= 2 && ($this->request->a == "" || ($this->request->a == "home" && $this->request->b == "") || ($this->request->a == "home" && $this->request->b == "main"))){
             
-            $checkhome = $this->request->root.'application'.$this->system->SPATH.$this->system->params[$_SERVER['SYSTEM']]['application'].$this->system->SPATH.'views'.$this->system->SPATH.'pages'.$this->system->SPATH.'home.layer.php';
+            $checkhome = $this->request->root.'applications'.$this->sysco->SPATH.$this->sysco->request->application.$this->sysco->SPATH.'views'.$this->sysco->SPATH.'pages'.$this->sysco->SPATH.'home.layer.php';
             
             if(file_exists($checkhome)){
 
-                $setway = 'application.'.$this->system->params[$_SERVER['SYSTEM']]['application'].'.pages.home';
+                $setway = 'applications.'.$this->sysco->request->application.'.pages.home';
 
             }else{
 
-                $checkhome = $this->request->root.'application'.$this->system->SPATH.$this->system->params[$_SERVER['SYSTEM']]['application'].$this->system->SPATH.'views'.$this->system->SPATH.'pages'.$this->system->SPATH.'home'.$this->system->SPATH.'main.layer.php';
+                $checkhome = $this->request->root.'applications'.$this->sysco->SPATH.$this->sysco->request->application.$this->sysco->SPATH.'views'.$this->sysco->SPATH.'pages'.$this->sysco->SPATH.'home'.$this->sysco->SPATH.'main.layer.php';
 
                 if(file_exists($checkhome)){
 
-                    $setway = 'application.'.$this->system->params[$_SERVER['SYSTEM']]['application'].'.pages.home.main';
+                    $setway = 'applications.'.$this->sysco->request->application.'.pages.home.main';
 
                 }
                 
             }   
 
         }
-        
+
         $result = $this->layer($setway);
         
         if(!file_exists($result)){
             
             header('HTTP/1.1 404 Not Found');
 
-            $custom404 = $this->request->root.'application'.$this->system->SPATH.$this->system->params[$_SERVER['SYSTEM']]['application'].$this->system->SPATH.'views'.$this->system->SPATH.'errors'.$this->system->SPATH.'404.layer.php';
+            $custom404 = $this->request->root.'applications'.$this->sysco->SPATH.$this->sysco->request->application.$this->sysco->SPATH.'views'.$this->sysco->SPATH.'errors'.$this->sysco->SPATH.'404.layer.php';
 
             if(file_exists($custom404)){
                 $result = $custom404;
@@ -185,11 +186,11 @@ class Sights {
 
         $le = ".layer.php";
         $leway = $layer;
-        $leway = str_replace('.', '/', $leway);
+        $leway = str_replace('.', $this->sysco->SPATH, $leway);
         
         foreach($this->viewspath as $pathview){
             if(strpos($leway,$pathview) !== false){
-                $leway = str_replace($pathview.'/', 'views/'.$pathview.'/', $leway);
+                $leway = str_replace($pathview.$this->sysco->SPATH, 'views'.$this->sysco->SPATH.$pathview.$this->sysco->SPATH, $leway);
             }
         }
         
@@ -198,8 +199,8 @@ class Sights {
         if (file_exists($leway.$le)) {
             $result = $leway.$le;
         } else {
-            if (file_exists($leway.$this->system->SPATH.$increment.$le)) {
-                $result = $leway.$this->system->SPATH.$increment.$le;
+            if (file_exists($leway.$this->sysco->SPATH.$increment.$le)) {
+                $result = $leway.$this->sysco->SPATH.$increment.$le;
             } else {
                 $result = $leway;
             }
@@ -229,7 +230,7 @@ class Sights {
         $codehtml = "";
         
         @ob_start();
-
+        
         if ($getInclude != 'none') {
 
             if (file_exists($getInclude)) {
@@ -247,7 +248,8 @@ class Sights {
                 include($getInclude);
 
             }else{
-
+                
+                $this->loadcontinue = false;
                 echo "Erro 404";
 
             }
@@ -257,7 +259,7 @@ class Sights {
         $extendsHTML = @ob_get_contents();
         $compactHTML = @ob_get_clean();
 
-        if ($this->system->params[$_SERVER['SYSTEM']]['compact'] === true) {
+        if ($this->sysco->params[$_SERVER['SYSTEM']]['compact'] === true) {
             $codehtml = $compactHTML;
         } else {
             $codehtml = $extendsHTML;
@@ -278,8 +280,8 @@ class Sights {
         $viewcompile = "";
         
         $compile = $codeview;
-        
-        $pathcompile = dirname(__FILE__).$this->system->SPATH."..".$this->system->SPATH."..".$this->system->SPATH."..".$this->system->SPATH."storage".$this->system->SPATH."compile".$this->system->SPATH;
+
+        $pathcompile = $this->request->storage."compile".$this->sysco->SPATH;
         $this->functions->delTree($pathcompile);
         
         $oldumask = umask(0); 
@@ -347,8 +349,8 @@ class Sights {
         }
 
         $view = $this->compile($index);
-
-        if ($this->system->params[$_SERVER['SYSTEM']]['compact'] == true) {
+        
+        if ($this->sysco->params[$_SERVER['SYSTEM']]['compact'] == true) {
             
             $view = $this->compress($view);
             
@@ -356,8 +358,17 @@ class Sights {
             
         $print = $view;
 
-        return print($print);
+        if($this->loadcontinue){
+            
+            return print($print);
         
+        }else{
+            
+            echo "Não foi possível compilar nenhuma view da aplicação {$this->sysco->request->application}!";
+            die;
+            
+        }
+
     }
 
 }

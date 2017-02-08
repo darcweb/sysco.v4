@@ -18,10 +18,13 @@ class GlobalVars {
         'content'=>'{{content}}',
         'footer'=>'{{footer}}',
         'baseurl'=>'{{baseurl}}',
+        'appbaseurl'=>'{{appbaseurl}}',
+        'appviewsurl'=>'{{appviewsurl}}',
         'uploads'=>'{{uploads}}',
         'uploadsfiles'=>'{{uploadsfiles}}',
         'root'=>'{{root}}',
         'local'=>'{{local}}',
+        'storage'=>'{{storage}}',
     );
     
     public $vars = array(
@@ -29,24 +32,32 @@ class GlobalVars {
         'content'=>'Conteúdo da página',
         'footer'=>'Rodapé da página',
         'baseurl'=>'URL base da aplicação',
+        'appbaseurl'=>'URL da pasta base da aplicação',
+        'appviewsurl'=>'URL da pasta de views da aplicação',
+        'appfilesurl'=>'URL de arquivos da aplicação',
         'uploads'=>'URL de uploads da aplicação',
         'uploadsfiles'=>'Caminho da pasta de uploads',
         'root'=>'Caminho raiz do sistema',
         'local'=>'Caminho atual da requisição',
+        'storage'=>'Caminho do diretório de armazenamento de arquivos',
     );
     
     private $request = null;
     
-    function __construct($req){
+    function __construct($request){
         
-        $this->request = $req;
+        $this->request = $request;
         
         $preparevars = array(
             'baseurl'=> $this->request->baseurl,
+            'appbaseurl'=> $this->request->appbaseurl,
+            'appviewsurl'=> $this->request->appviewsurl,
+            'appfilesurl'=> $this->request->appfilesurl,
             'uploads'=> $this->request->uploads,
             'uploadsfiles'=> $this->request->uploadsfiles,
             'root'=> $this->request->root,
             'local'=> $this->request->local,
+            'storage'=> $this->request->storage,
         );
         
         $this->vars = array_merge($this->vars,$preparevars);

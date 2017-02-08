@@ -20,10 +20,10 @@ $params['sysco']['url'] = $_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 $params['sysco']['system'] = $_SERVER['SYSTEM'];
 $params['sysco']['domain'] = "www.sysco.com.br";
 $params['sysco']['root'] = 'sysco.v4/';
-$params['sysco']['uploads'] = 'storange/uploads/';
+$params['sysco']['uploads'] = '{storage}/uploads/';
 
 //pasta do template
-$params['sysco']['application'] = "sysco_v4";
+$params['sysco']['applications'] = "www";
 $params['sysco']['setindex'] = "index";
 
 //conexão com o banco de dados local

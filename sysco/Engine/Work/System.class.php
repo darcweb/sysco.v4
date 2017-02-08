@@ -14,7 +14,7 @@ namespace Sysco\Engine\Work;
 use Sysco\Engine\Utils\Functions;
 use Sysco\Http\Request;
 use Sysco\Compiler\Render\Charge;
-use Sysco\Engine\Work\Connect;
+//use Sysco\Engine\Work\Connect;
 use PDO;
 
 class System {
@@ -102,16 +102,23 @@ class System {
         $result = NULL;
         $queryStringConsult = $this->prepareConsult($queryString);
         if($this->conn){
-
-            $prepareQuery = $this->conn->prepare($queryStringConsult);
-            $prepareQuery->execute();
-            $databaseErrors = $prepareQuery->errorInfo();
-            if($databaseErrors[2]){
-                /*echo '<pre>';
-                print_r($databaseErrors[2]);
-                echo '</pre>';*/
-            }else{
-                $result = $prepareQuery;
+            
+            try{
+                
+                $prepareQuery = $this->conn->prepare($queryStringConsult);
+                $prepareQuery->execute();
+                $databaseErrors = $prepareQuery->errorInfo();
+                if($databaseErrors[2]){
+                    /*echo '<pre>';
+                    print_r($databaseErrors[2]);
+                    echo '</pre>';*/
+                }else{
+                    $result = $prepareQuery;
+                }
+                
+            }  catch (PDOException $e){
+                echo "<hr/>ERRO NA CONEXÃO COM O BANCO DE DADOS<br /><br />Código de erro: {$e->getCode()}<br />Mensagem: {$e->getMessage()}<hr/>";
+                die;
             }
 
         }
